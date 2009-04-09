@@ -6,6 +6,10 @@ use base qw( Class::Data::Inheritable );
 use Test::More ();
 use Data::Dump;
 use Class::Inspector;
+use Encode;
+use Term::Encoding;
+
+my $ENCODE = eval { find_encoding(Term::Encoding::get_encoding()) };
 
 sub import {
   my ($class, @flags)  = @_;
@@ -103,6 +107,9 @@ sub _should_be_ignored {
 
 sub _find_symbols {
   my $class = shift;
+
+  # to allow multibyte method names
+  local $Class::Inspector::RE_IDENTIFIER = qr/.+/s;
 
   my $methods = Class::Inspector->methods($class, 'expanded');
 
@@ -262,7 +269,11 @@ sub dump {
 sub message {
   my ($class, $message) = @_;
 
-  return $class->_prepend_class_name( $class->_prepend_test_name( $message ) );
+  $message = $class->_prepend_class_name( $class->_prepend_test_name( $message ) );
+
+  $message = $ENCODE->encode($message) if $ENCODE && $INC{'utf8.pm'};
+
+  return $message;
 }
 
 sub _prepend_test_name {
@@ -271,6 +282,7 @@ sub _prepend_test_name {
   $message = '' unless defined $message;
 
   if ( my $name = $class->test_name ) {
+    $name = decode_utf8($name) if $ENCODE && $INC{'utf8.pm'};
     $message = "$name: $message" unless $message =~ /\b$name\b/;
   }
 
