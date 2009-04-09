@@ -5,7 +5,7 @@ use warnings;
 use Test::More ();
 use Sub::Install qw( install_sub );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 my @tests;
 my $caller = caller;
