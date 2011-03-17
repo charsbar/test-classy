@@ -1,7 +1,7 @@
 use strict;
 use warnings;
+use lib "t/lib", glob("extlib/*/lib");
 use Test::Classy;
-use lib 't/lib';
 
 load_tests_from 'Test::Classy::Test::NoPlan';
 

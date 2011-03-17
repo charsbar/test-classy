@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use lib "t/lib", glob("extlib/*/lib");
 use Test::Classy;
 
 load_test 'Test::Classy::Test::OneFile::First';
