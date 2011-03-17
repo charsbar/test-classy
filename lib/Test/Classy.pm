@@ -6,7 +6,7 @@ use Test::More ();
 use Test::Classy::Util;
 use Sub::Install qw( install_sub );
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 my @tests;
 my $caller = caller;
