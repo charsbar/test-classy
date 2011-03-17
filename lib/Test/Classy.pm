@@ -3,6 +3,7 @@ package Test::Classy;
 use strict;
 use warnings;
 use Test::More ();
+use Test::Classy::Util;
 use Sub::Install qw( install_sub );
 
 our $VERSION = '0.08';
@@ -60,7 +61,7 @@ install_sub({
       @tests = Test::Classy::_look_for_tests();
     }
 
-    unless ( Test::More->builder->{Have_Plan} ) {
+    unless (Test::Classy::Util::_planned()) {
       Test::More::plan tests => __PACKAGE__->plan;
     }
 

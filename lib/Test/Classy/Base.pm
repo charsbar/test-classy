@@ -8,6 +8,7 @@ use Data::Dump;
 use Class::Inspector;
 use Encode;
 use Term::Encoding;
+use Test::Classy::Util;
 
 my $ENCODE = eval { find_encoding(Term::Encoding::get_encoding()) };
 
@@ -62,7 +63,7 @@ sub MODIFY_CODE_ATTRIBUTES {
   return unless $stash{plan};
 
   if ( $stash{plan} eq 'no_plan' ) {
-    Test::More::plan 'no_plan' unless Test::More->builder->{Have_Plan};
+    Test::More::plan 'no_plan' unless Test::Classy::Util::_planned();
     $stash{plan} = 0;
   }
 
@@ -187,12 +188,12 @@ sub _run_test {
 sub __run_test {
   my ($class, $test, @args) = @_;
 
-  my $current = Test::More->builder->{Curr_Test};
+  my $current = Test::Classy::Util::_current_test();
 
   local $@;
   eval { $test->{code}($class, @args); };
   if ( $@ ) {
-    my $done = Test::More->builder->{Curr_Test} - $current;
+    my $done = Test::Classy::Util::_current_test() - $current;
     my $rest = $test->{plan} - $done;
     if ( $rest ) {
       if ( exists $test->{TODO} ) {
@@ -212,7 +213,7 @@ sub __run_test {
   }
 
   if ( my $reason = $class->_is_skipped ) {
-    my $done = Test::More->builder->{Curr_Test} - $current;
+    my $done = Test::Classy::Util::_current_test() - $current;
     my $rest = $test->{plan} - $done;
     if ( $rest ) {
       for ( 1 .. $rest ) {
