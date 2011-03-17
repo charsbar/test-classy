@@ -5,7 +5,7 @@ use warnings;
 use Test::More ();
 use Sub::Install qw( install_sub );
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 my @tests;
 my $caller = caller;
@@ -18,9 +18,10 @@ install_sub({
 
     require Module::Find;
 
-    @tests = ();
+    @tests = Test::Classy::_look_for_tests(@monikers);
     foreach my $moniker ( @monikers ) {
-      push @tests, Module::Find::useall( $moniker );
+      push @tests, grep { $_->isa('Test::Classy::Base') }
+                   Module::Find::useall( $moniker );
     }
   },
 });
@@ -30,7 +31,9 @@ install_sub({
   into => $caller,
   code => sub ($) {
     my $moniker = shift;
-    eval "require $moniker" or die $@;
+    unless ($moniker->can('import')) {
+      eval "require $moniker" or die $@;
+    }
     push @tests, $moniker;
   },
 });
@@ -53,6 +56,10 @@ install_sub({
   code => sub (;@) {
     my @args = @_;
 
+    unless (@tests) {
+      @tests = Test::Classy::_look_for_tests();
+    }
+
     unless ( Test::More->builder->{Have_Plan} ) {
       Test::More::plan tests => __PACKAGE__->plan;
     }
@@ -62,6 +69,29 @@ install_sub({
     }
   },
 });
+
+sub _look_for_tests {
+  my @queue = @_;
+
+  require Class::Inspector;
+
+  unless (@queue) {
+    @queue = grep { $_ ne 'main' }
+             Class::Inspector->_subnames('');
+  }
+
+  my @found;
+  while (my $moniker = shift @queue) {
+    my @subnames = Class::Inspector->_subnames($moniker);
+    foreach my $subname (@subnames) {
+      my $class = $moniker.'::'.$subname;
+      push @found, $class if $class ne 'Test::Classy::Base'
+                         and $class->isa('Test::Classy::Base');
+      unshift @queue, $class;
+    }
+  }
+  return @found;
+}
 
 sub plan {
   my $plan = 0;

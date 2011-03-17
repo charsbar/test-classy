@@ -1,5 +1,8 @@
 Revision history for Test-Classy
 
+0.08 2009/04/17
+  - allowed writing tests in a file (instead of separate files)
+
 0.07 2009/04/09
   - unicode test name/message support (suggested by tokuhirom)
 
