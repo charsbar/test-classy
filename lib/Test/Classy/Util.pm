@@ -5,21 +5,11 @@ use warnings;
 use Test::More ();
 
 sub _current_test {
-  if ($Test::More::VERSION >= 2) {
-    return Test::More->builder->history->results_count;
-  }
-  else {
-    return Test::More->builder->{Curr_Test};
-  }
+  return Test::More->builder->current_test;
 }
 
 sub _planned {
-  if ($Test::More::VERSION >= 2) {
-    return Test::More->builder->_plan_handled;
-  }
-  else {
-    return Test::More->builder->{Have_Plan};
-  }
+  return Test::More->builder->has_plan;
 }
 
 1;
