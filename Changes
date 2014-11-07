@@ -1,5 +1,9 @@
 Revision history for Test-Classy
 
+0.10 2014/11/07
+  - Test::More 1.3+ support (and dropped obsolete Test::More 1.5/2 support)
+  - fixed encoding issue
+
 0.09 2011/03/18
   - Test::More version 2 support
 
