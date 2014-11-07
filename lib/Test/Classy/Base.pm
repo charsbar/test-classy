@@ -23,6 +23,8 @@ sub import {
   no strict 'refs';
   push @{"$caller\::ISA"}, $class;
 
+  Test::Stream::Toolset::init_tester($caller) if $INC{'Test/Stream/Toolset.pm'};
+
   # XXX: not sure why but $TODO refused to be exported well
   *{"$caller\::TODO"} = \$Test::More::TODO;
 
