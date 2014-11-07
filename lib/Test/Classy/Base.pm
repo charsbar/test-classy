@@ -274,7 +274,7 @@ sub message {
 
   $message = $class->_prepend_class_name( $class->_prepend_test_name( $message ) );
 
-  $message = $ENCODE->encode($message) if $ENCODE && $INC{'utf8.pm'};
+  $message = $ENCODE->encode($message) if $ENCODE && Encode::is_utf8($message);
 
   return $message;
 }
@@ -285,7 +285,6 @@ sub _prepend_test_name {
   $message = '' unless defined $message;
 
   if ( my $name = $class->test_name ) {
-    $name = decode_utf8($name) if $ENCODE && $INC{'utf8.pm'};
     $message = "$name: $message" unless $message =~ /\b$name\b/;
   }
 
