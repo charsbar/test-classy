@@ -7,7 +7,7 @@ use Test::Classy::Util;
 use Sub::Install qw( install_sub );
 use Class::Inspector;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 my @tests;
 my $caller = caller;
